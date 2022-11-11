@@ -57,7 +57,10 @@ class _ChatScreenState extends State<ChatScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             StreamBuilder<QuerySnapshot>(
-                stream: _firestore.collection('messages').snapshots(),
+                stream: _firestore
+                    .collection('messages')
+                    .orderBy('date')
+                    .snapshots(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     return Center(
@@ -99,15 +102,20 @@ class _ChatScreenState extends State<ChatScreen> {
                       decoration: kMessageTextFieldDecoration,
                     ),
                   ),
-                  FlatButton(
-                    onPressed: () {
+                  InkWell(
+                    onTap: () {
                       textController.clear();
-                      _firestore.collection('messages').add(
-                          {'messageText': mtext, 'userEmail': user?.email});
+                      _firestore.collection('messages').add({
+                        'messageText': mtext,
+                        'userEmail': user?.email,
+                        'date': DateTime.now()
+                      });
                     },
-                    child: Text(
-                      'Send',
-                      style: kSendButtonTextStyle,
+                    child: Container(
+                      child: Text(
+                        'Send',
+                        style: kSendButtonTextStyle,
+                      ),
                     ),
                   ),
                 ],
